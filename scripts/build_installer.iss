@@ -1,27 +1,30 @@
 [Setup]
-AppName=Human Agentic Harness
+AppName=Hutrol Agentic Harness
 AppVersion=0.1.0
-DefaultDirName={pf}\HumanHarness
-DefaultGroupName=Human Harness
+DefaultDirName={pf}\HutrolHarness
+DefaultGroupName=Hutrol Harness
 OutputDir=dist
-OutputBaseFilename=HumanSetup
+OutputBaseFilename=HutrolSetup
 Compression=lzma2
 SolidCompression=yes
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 
 [Files]
-; This assumes PyInstaller has already built the binary in dist\human.exe
-Source: "..\dist\human.exe"; DestDir: "{app}"; Flags: ignoreversion
+; This assumes PyInstaller has already built the binary in dist\hutrol.exe
+Source: "..\dist\hutrol.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\skills\*"; DestDir: "{app}\skills"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[Tasks]
+Name: "envPath"; Description: "Add Hutrol to system PATH environment variable"; GroupDescription: "Additional configuration:"; Flags: unchecked
+
 [Icons]
-Name: "{group}\Human Harness Shell"; Filename: "cmd.exe"; Parameters: "/K ""{app}\human.exe repl"""
-Name: "{commondesktop}\Human Harness"; Filename: "{app}\human.exe"; Parameters: "repl"
+Name: "{group}\Hutrol Harness Shell"; Filename: "cmd.exe"; Parameters: "/K ""{app}\hutrol.exe repl"""
+Name: "{commondesktop}\Hutrol Harness"; Filename: "{app}\hutrol.exe"; Parameters: "repl"
 
 [Registry]
-; Add the app directory to the user's PATH so they can use the `human` CLI anywhere
-Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"; Check: NeedsAddPath(ExpandConstant('{app}'))
+; Add the app directory to the user's PATH so they can use the `hutrol` CLI anywhere
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"; Tasks: envPath; Check: NeedsAddPath(ExpandConstant('{app}'))
 
 [Code]
 function NeedsAddPath(Param: string): boolean;
