@@ -7,3 +7,6 @@ dist/
 build/
 *.egg-info/
 human_compliance_export_*.zip
+plan.md
+phases.md
+progress.md
