@@ -19,7 +19,7 @@ class ConfigManager:
             # Default empty config
             self.save_config({
                 "PROVIDER": "openrouter",
-                "OPENROUTER_MODEL": "meta-llama/llama-3.1-8b-instruct",
+                "OPENROUTER_MODEL": "nvidia/nemotron-3-super-120b-a12b:free",
                 "OLLAMA_MODEL": "llama3",
                 "OLLAMA_HOST": "http://localhost:11434",
                 "RULES_RED": ["format", "mkfs"],
@@ -79,7 +79,7 @@ def load_config() -> Dict[str, Any]:
     
     if provider == "openrouter":
         if not config.get("OPENROUTER_API_KEY"):
-            raise ConfigError("Model not setup! Please add an OpenRouter API key using:\n  hutrol config set OPENROUTER_API_KEY <your-key>\nOr switch to local Ollama using:\n  hutrol config set PROVIDER ollama")
+            raise ConfigError("Model not setup! Default model is nvidia/nemotron-3-super-120b-a12b:free. Please add an OpenRouter API key using:\n  hutrol config set OPENROUTER_API_KEY <your-key>\nOr switch to local Ollama using:\n  hutrol config set PROVIDER ollama")
         if not config.get("OPENROUTER_MODEL"):
             raise ConfigError("Model not setup! Please set OPENROUTER_MODEL using:\n  hutrol config set OPENROUTER_MODEL <model-name>")
             
