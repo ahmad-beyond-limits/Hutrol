@@ -29,7 +29,7 @@ class PolicyEngine:
             return "allow"
             
         # 2. Check risk-based policies
-        if computed_risk in [RiskTier.READ_ONLY, RiskTier.SAFE]:
+        if computed_risk == RiskTier.READ_ONLY:
             return "allow"
             
         if computed_risk in [RiskTier.MUTATING_SCOPED, RiskTier.MUTATING_UNSCOPED]:
