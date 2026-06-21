@@ -31,6 +31,8 @@ The MCP Broker acts as the **OS Firewall**. It intercepts all requests from the 
 - `MUTATING_SCOPED`: Requires notification (e.g., writing a new file).
 - `MUTATING_UNSCOPED` / `DESTRUCTIVE`: Blocked or requires explicit Human-in-the-Loop `[y/N]` approval (e.g., `Remove-Item`).
 
+**Persistent Background Shell:** The MCP broker features a true stateful persistent shell backend. Unlike standard stateless script runners, Hutrol runs an invisible background terminal session (PowerShell or Bash) that stays alive for the entire duration of your REPL session. This means if the agent navigates directories (`cd`), starts background jobs, or defines environment variables, the system retains that state flawlessly across consecutive commands!
+
 ### 3. The Compliance Layer
 Sitting safely below the LLM, this layer ensures true enterprise governance:
 - **Policy Engine**: Overrides risk tiers based on predefined roles (e.g., an `admin` may approve destructive actions, but a `junior_dev` is strictly blocked).
@@ -107,7 +109,7 @@ uv run hutrol run "Find all python files in the src directory and tell me how ma
 ```
 
 ### 2. Interactive REPL Mode
-Start an ongoing conversation with the agent where it retains context across multiple queries:
+Start an ongoing conversation with the agent where it retains context across multiple queries. The state machine maintains an active **Conversational Memory**, meaning you can ask follow-up questions (e.g., "kill the 3rd process") and the agent will remember exactly what you were discussing.
 ```bash
 uv run hutrol repl
 ```
