@@ -9,6 +9,7 @@ Compression=lzma2
 SolidCompression=yes
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
+ChangesEnvironment=yes
 
 [Files]
 ; This assumes PyInstaller has already built the binary in dist\hutrol.exe
@@ -17,10 +18,6 @@ Source: "..\skills\*"; DestDir: "{app}\skills"; Flags: ignoreversion recursesubd
 
 [Tasks]
 Name: "envPath"; Description: "Add Hutrol to system PATH environment variable"; GroupDescription: "Additional configuration:"; Flags: unchecked
-
-[Icons]
-Name: "{group}\Hutrol Harness Shell"; Filename: "cmd.exe"; Parameters: "/K ""{app}\hutrol.exe repl"""
-Name: "{commondesktop}\Hutrol Harness"; Filename: "{app}\hutrol.exe"; Parameters: "repl"
 
 [Registry]
 ; Add the app directory to the user's PATH so they can use the `hutrol` CLI anywhere
