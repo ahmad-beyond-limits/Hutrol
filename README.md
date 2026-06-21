@@ -142,6 +142,7 @@ Modifies your `~/.human/config.json` persistent configuration file.
 * **`OPENROUTER_MODEL`**: The cloud model to use (default: `meta-llama/llama-3.1-8b-instruct`).
 * **`OLLAMA_MODEL`**: The local model name pulled in Ollama (default: `llama3`).
 * **`OLLAMA_HOST`**: The URL for your local Ollama server (default: `http://localhost:11434`).
+* **`SAFETY`**: Set to `false` to completely disable the human-in-the-loop (Y/N) confirmation prompts and allow the agent to auto-approve executing system commands (default: `true`).
 
 **Example:**
 ```bash

@@ -1,6 +1,7 @@
 from rich.console import Console
 from rich.prompt import Confirm
 from human.safety.risk_classifier import RiskTier, requires_approval, requires_notification
+from human.config.loader import load_config
 
 console = Console()
 
@@ -9,6 +10,11 @@ class ApprovalGate:
     
     @staticmethod
     def check_approval(tool_name: str, args: dict, risk_tier: RiskTier) -> bool:
+        config = load_config()
+        if config.get("SAFETY", "true").lower() == "false":
+            console.print(f"[bold yellow]Notice:[/bold yellow] Auto-approving '{tool_name}' (SAFETY is disabled).")
+            return True
+
         if risk_tier == RiskTier.READ_ONLY:
             return True
             
