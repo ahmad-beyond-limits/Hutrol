@@ -34,13 +34,20 @@ class StateMachine:
         self.current_risk = None
         self.exec_result = None
         self.final_report = ""
+        self.history = []
 
     def run(self, prompt: str) -> str:
         self.prompt = prompt
         self.state = OrchestratorState.PARSE
         
+        # Add user prompt to history
+        self.history.append({"role": "user", "content": prompt})
+        
         while self.state != OrchestratorState.END:
             self._tick()
+            
+        # Add agent response to history
+        self.history.append({"role": "assistant", "content": self.final_report})
             
         return self.final_report
 
@@ -53,10 +60,14 @@ class StateMachine:
             with tracer.start_as_current_span("model_plan"):
                 schemas = registry.get_all_schemas()
                 
-                # We would normally format history here from the SQLite store.
-                # For this basic implementation, we just pass the prompt.
-                # In a multi-turn setup, context_manager.compact_transcript(history) would be used.
-                self.plan_result = self.provider.generate_plan(self.prompt, tools=schemas)
+                # Format history for the prompt
+                context_prompt = self.prompt
+                if len(self.history) > 1:
+                    # Ignore the last item since it's the current prompt
+                    history_text = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in self.history[:-1]])
+                    context_prompt = f"Previous Conversation Context:\n{history_text}\n\nUser's Current Request:\n{self.prompt}"
+                
+                self.plan_result = self.provider.generate_plan(context_prompt, tools=schemas)
                 
             audit_logger.log_event("PLAN_COMPLETE", {"plan": str(self.plan_result)})
             
