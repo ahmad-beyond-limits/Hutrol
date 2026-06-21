@@ -1,4 +1,5 @@
 import subprocess
+import platform
 from typing import Dict, Any, Tuple
 from human.safety.risk_classifier import RiskTier
 from human.orchestrator.types import ExecutionResult
@@ -34,9 +35,16 @@ class MCPBroker:
         try:
             # We use shell=True here just for demonstration. 
             # In a real app, this would be highly sanitized or passed through an AST parser.
+            if platform.system() == "Windows":
+                cmd_args = ["powershell", "-Command", command]
+                shell_val = False
+            else:
+                cmd_args = command
+                shell_val = True
+
             result = subprocess.run(
-                command, 
-                shell=True, 
+                cmd_args, 
+                shell=shell_val, 
                 capture_output=True, 
                 text=True, 
                 timeout=30
