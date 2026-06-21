@@ -5,7 +5,9 @@ from human.tools.registry import ToolDef, registry
 from human.mcp.broker import MCPBroker
 
 def execute_system_command(args: Dict[str, Any]) -> ExecutionResult:
-    command = args.get("command", "")
+    command = args.get("command", "").strip()
+    if not command:
+        return ExecutionResult(success=False, output="", error="No command provided by the LLM. You must specify the 'command' argument in your tool call.")
     return MCPBroker.execute_system_command(command)
 
 def get_dynamic_risk(args: Dict[str, Any]) -> RiskTier:
