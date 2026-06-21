@@ -128,7 +128,12 @@ uv run hutrol export-audit
 
 ## Settings & Command Reference
 
-Hutrol provides several commands to manage your AI provider, security configuration, and execution mode. Below is a detailed list of every command available in the CLI.
+Hutrol provides several commands to manage your AI provider, security configuration, and execution mode. You can always list all available commands by typing:
+```bash
+hutrol --help
+```
+
+Below is a detailed list of every command available in the CLI.
 
 ### 1. `hutrol config set <KEY> <VALUE>`
 Modifies your `~/.human/config.json` persistent configuration file.
@@ -138,17 +143,42 @@ Modifies your `~/.human/config.json` persistent configuration file.
 * **`OLLAMA_MODEL`**: The local model name pulled in Ollama (default: `llama3`).
 * **`OLLAMA_HOST`**: The URL for your local Ollama server (default: `http://localhost:11434`).
 
+**Example:**
+```bash
+hutrol config set OPENROUTER_MODEL anthropic/claude-3.5-sonnet
+```
+
 ### 2. `hutrol config list`
 Displays all of your currently active configuration settings. Sensitive information, like API keys or Tokens, are automatically obscured (e.g., `sk-o*******************`) so they never leak in your terminal logs.
+
+**Example:**
+```bash
+hutrol config list
+```
 
 ### 3. `hutrol run "<prompt>"`
 The "Single Shot" execution mode. Hutrol will parse the prompt, execute the necessary tools or system commands to accomplish the task, and then immediately terminate. Ideal for CI/CD pipelines or background scripts.
 
+**Example:**
+```bash
+hutrol run "Find all python files in the src directory and tell me how many there are."
+```
+
 ### 4. `hutrol repl`
 Starts an interactive terminal session (`hutrol>`). Context is maintained across your prompts. You can chat with the agent, ask it to look up information, write code, or execute complex multi-step workflows. Type `exit` or `quit` to leave.
 
+**Example:**
+```bash
+hutrol repl
+```
+
 ### 5. `hutrol export-audit`
 Packages your local immutable system logs (`audit.jsonl`), tool execution traces (`trace.jsonl`), and human-in-the-loop decisions (`approvals.jsonl`) into a timestamped, zipped archive. It also generates a cryptographic `SHA-256 Checksum` for the file to prove the integrity of the audit logs to enterprise compliance teams.
+
+**Example:**
+```bash
+hutrol export-audit
+```
 
 ---
 
