@@ -23,7 +23,7 @@ class ApprovalGate:
             return True
             
         if requires_approval(risk_tier):
-            console.print(f"\n[bold red]WARNING:[/bold red] The agent has proposed a high-risk action ([bold]{risk_tier.name}[/bold]).")
+            console.print(f"\n[bold yellow]WARNING:[/bold yellow] The agent has proposed a restricted action ([bold yellow]{risk_tier.name}[/bold yellow]).")
             console.print(f"Tool: [bold cyan]{tool_name}[/bold cyan]")
             console.print(f"Arguments: {args}\n")
             

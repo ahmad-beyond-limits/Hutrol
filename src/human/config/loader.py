@@ -21,7 +21,9 @@ class ConfigManager:
                 "PROVIDER": "openrouter",
                 "OPENROUTER_MODEL": "meta-llama/llama-3.1-8b-instruct",
                 "OLLAMA_MODEL": "llama3",
-                "OLLAMA_HOST": "http://localhost:11434"
+                "OLLAMA_HOST": "http://localhost:11434",
+                "RULES_RED": ["format", "mkfs"],
+                "RULES_YELLOW": ["rm", "del", "Remove-Item", "Stop-Process"]
             })
             
     def load_config(self) -> Dict[str, Any]:
@@ -45,6 +47,28 @@ class ConfigManager:
     def set_key(self, key: str, value: str):
         config = self.load_config()
         config[key] = value
+        self.save_config(config)
+
+    def set_rule(self, command: str, color: str):
+        config = self.load_config()
+        red = config.get("RULES_RED", [])
+        yellow = config.get("RULES_YELLOW", [])
+        
+        # Remove from both first to ensure it's not duplicated
+        if command in red:
+            red.remove(command)
+        if command in yellow:
+            yellow.remove(command)
+            
+        color = color.lower()
+        if color == "red":
+            red.append(command)
+        elif color == "yellow":
+            yellow.append(command)
+        # If green, it stays removed from both.
+        
+        config["RULES_RED"] = red
+        config["RULES_YELLOW"] = yellow
         self.save_config(config)
 
 config_manager = ConfigManager()

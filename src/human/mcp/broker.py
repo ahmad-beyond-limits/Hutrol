@@ -4,6 +4,7 @@ import uuid
 from typing import Dict, Any, Tuple
 from human.safety.risk_classifier import RiskTier
 from human.orchestrator.types import ExecutionResult
+from human.config.loader import config_manager
 
 class PersistentShell:
     _instance = None
@@ -54,23 +55,24 @@ class PersistentShell:
 
 class MCPBroker:
     """Model Context Protocol Secure Broker. Acts as the OS Firewall."""
-    
-    ALLOWED_READ_COMMANDS = ["Get-Process", "Get-Service", "Get-ChildItem", "echo", "ping"]
-    BLOCKED_COMMANDS = ["Stop-Process", "Remove-Item", "rm", "del", "Restart-Service"]
 
     @classmethod
     def analyze_command(cls, command: str) -> Tuple[bool, RiskTier, str]:
         """Analyzes a system command and returns (is_allowed, risk_tier, reason)."""
         cmd_base = command.split()[0] if command.strip() else ""
         
-        if cmd_base in cls.BLOCKED_COMMANDS:
-            return False, RiskTier.DESTRUCTIVE, f"Command '{cmd_base}' is explicitly blocked."
+        config = config_manager.load_config()
+        rules_red = config.get("RULES_RED", [])
+        rules_yellow = config.get("RULES_YELLOW", [])
+        
+        if cmd_base in rules_red:
+            return False, RiskTier.DESTRUCTIVE, f"Command '{cmd_base}' is blocked by red rules."
             
-        if cmd_base in cls.ALLOWED_READ_COMMANDS:
-            return True, RiskTier.READ_ONLY, "Allowed read-only command."
+        if cmd_base in rules_yellow:
+            return True, RiskTier.MUTATING_UNSCOPED, f"Command '{cmd_base}' requires explicit approval (yellow list)."
             
-        # Default unknown commands to MUTATING_UNSCOPED to require approval
-        return True, RiskTier.MUTATING_UNSCOPED, "Unknown command requires explicit approval."
+        # Default to GREEN (READ_ONLY) to allow silently unless flagged
+        return True, RiskTier.READ_ONLY, "Command is allowed implicitly (green list)."
 
     @classmethod
     def execute_system_command(cls, command: str) -> ExecutionResult:
