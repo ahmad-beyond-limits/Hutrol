@@ -10,7 +10,7 @@ class PersistentShell:
     
     def __init__(self):
         if platform.system() == "Windows":
-            cmd = ["powershell", "-NoProfile", "-NonInteractive"]
+            cmd = ["powershell", "-NoProfile", "-NonInteractive", "-Command", "-"]
         else:
             cmd = ["bash"]
             
