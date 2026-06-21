@@ -51,11 +51,16 @@ When a task is too complex, the Main Orchestrator can spawn a Sub-Agent. These a
 
 You can configure Hutrol to run either via **OpenRouter** (cloud APIs) or **Ollama** (completely local, air-gapped).
 
-### Installation
+### Installation (Source / Development)
 Assuming you have [uv](https://github.com/astral-sh/uv) installed, clone the repository and sync the dependencies:
 ```bash
 uv sync
 ```
+
+### Installation (Pre-Built Installer)
+For enterprise deployment, you can use the generated `HutrolSetup.exe` Windows installer. 
+During installation, **make sure to check the box** that says: `"Add Hutrol to system PATH environment variable"`.
+This will configure your system's `PATH` automatically so that you can simply type `hutrol` into any terminal window without needing to navigate to the installation folder.
 
 ### Setup Option 1: OpenRouter (Cloud Models)
 By default, Hutrol uses OpenRouter. To set this up, you need to provide your API key and specify a model that supports Tool Calling (like Llama 3.1, Claude 3.5 Sonnet, or GPT-4o).
