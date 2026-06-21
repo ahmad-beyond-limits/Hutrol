@@ -8,7 +8,10 @@ def execute_system_command(args: Dict[str, Any]) -> ExecutionResult:
     command = args.get("command", "").strip()
     if not command:
         return ExecutionResult(success=False, output="", error="No command provided by the LLM. You must specify the 'command' argument in your tool call.")
-    return MCPBroker.execute_system_command(command)
+    result = MCPBroker.execute_system_command(command)
+    if result.success and not result.output.strip():
+        result.output = "Command executed successfully (no output)."
+    return result
 
 def get_dynamic_risk(args: Dict[str, Any]) -> RiskTier:
     """Helper to determine risk tier dynamically based on the command."""
