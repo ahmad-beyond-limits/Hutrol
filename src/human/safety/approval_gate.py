@@ -11,7 +11,8 @@ class ApprovalGate:
     @staticmethod
     def check_approval(tool_name: str, args: dict, risk_tier: RiskTier) -> bool:
         config = load_config()
-        if config.get("SAFETY", "true").lower() == "false":
+        safety_val = config.get("SAFETY", "true")
+        if str(safety_val).lower() == "false":
             console.print(f"[bold yellow]Notice:[/bold yellow] Auto-approving '{tool_name}' (SAFETY is disabled).")
             return True
 

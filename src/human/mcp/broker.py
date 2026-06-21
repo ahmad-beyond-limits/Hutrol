@@ -59,11 +59,11 @@ class MCPBroker:
     @classmethod
     def analyze_command(cls, command: str) -> Tuple[bool, RiskTier, str]:
         """Analyzes a system command and returns (is_allowed, risk_tier, reason)."""
-        cmd_base = command.split()[0] if command.strip() else ""
+        cmd_base = command.split()[0].lower() if command.strip() else ""
         
         config = config_manager.load_config()
-        rules_red = config.get("RULES_RED", [])
-        rules_yellow = config.get("RULES_YELLOW", [])
+        rules_red = [r.lower() for r in config.get("RULES_RED", [])]
+        rules_yellow = [r.lower() for r in config.get("RULES_YELLOW", [])]
         
         if cmd_base in rules_red:
             return False, RiskTier.DESTRUCTIVE, f"Command '{cmd_base}' is blocked by red rules."
