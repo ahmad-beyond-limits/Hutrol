@@ -16,11 +16,11 @@ class OllamaProvider(LLMProvider):
         """Sends a request to local Ollama. Format adheres to Ollama's Chat API."""
         
         # Ollama supports tools as of recent versions, we pass them down
-        os_info = f"{platform.system()} {platform.release()}"
+        os_info = self.get_system_context()
         payload = {
             "model": self.model,
             "messages": [
-                {"role": "system", "content": f"You are a helpful assistant running on a {os_info} machine. Use tools to fulfill requests. Output OS-compatible shell commands."},
+                {"role": "system", "content": f"You are a highly capable agentic assistant. System Environment: [{os_info}]. You must output commands that are natively compatible with this exact OS (e.g., PowerShell on Windows, Bash on Linux)."},
                 {"role": "user", "content": prompt}
             ],
             "tools": tools,
