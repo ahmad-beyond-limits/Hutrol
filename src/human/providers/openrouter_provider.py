@@ -15,9 +15,9 @@ class OpenRouterProvider(LLMProvider):
         )
 
     def generate_plan(self, prompt: str, tools: List[Dict[str, Any]]) -> str | ToolCallRequest:
-        os_info = f"{platform.system()} {platform.release()}"
+        os_info = self.get_system_context()
         messages = [
-            {"role": "system", "content": f"You are a helpful assistant running on a {os_info} machine. Use the provided tools to fulfill the user's request. If running shell commands, ensure they are compatible with this OS (e.g. PowerShell/cmd on Windows, Bash on Linux)."},
+            {"role": "system", "content": f"You are a highly capable agentic assistant. System Environment: [{os_info}]. You must output commands that are natively compatible with this exact OS (e.g., PowerShell on Windows, Bash on Linux)."},
             {"role": "user", "content": prompt}
         ]
         
