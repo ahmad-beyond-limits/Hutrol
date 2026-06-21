@@ -118,15 +118,22 @@ def update():
     import json
     import os
     import subprocess
+    import ssl
+    import shutil
     from pathlib import Path
     
     console.print("[bold yellow]Checking for latest updates from GitHub...[/bold yellow]")
+    
+    # Bypass PyInstaller SSL certificate issues on Windows
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
     
     api_url = "https://api.github.com/repos/ahmad-beyond-limits/Hutrol/releases/latest"
     req = urllib.request.Request(api_url, headers={'User-Agent': 'Hutrol-CLI'})
     
     try:
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(req, context=ctx) as response:
             data = json.loads(response.read().decode())
             
         assets = data.get("assets", [])
@@ -144,7 +151,10 @@ def update():
         installer_path = temp_dir / "HutrolSetup_update.exe"
         
         console.print(f"[bold yellow]Downloading latest release ({data.get('tag_name')})...[/bold yellow]")
-        urllib.request.urlretrieve(installer_url, installer_path)
+        
+        dl_req = urllib.request.Request(installer_url, headers={'User-Agent': 'Hutrol-CLI'})
+        with urllib.request.urlopen(dl_req, context=ctx) as response, open(installer_path, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
         
         console.print("[bold green]Download complete! Launching silent installer...[/bold green]")
         
