@@ -12,9 +12,17 @@ def execute_find_files(args: Dict[str, Any]) -> ExecutionResult:
     try:
         search_path = os.path.join(directory, pattern)
         files = glob.glob(search_path, recursive=True)
+        limit = 100
+        output_files = files[:limit]
+        extra = len(files) - limit
+        
+        output_str = f"Found {len(files)} files matching '{pattern}' in '{directory}':\n" + "\n".join(output_files)
+        if extra > 0:
+            output_str += f"\n\n... and {extra} more files. Please refine your search pattern or directory to see them."
+            
         return ExecutionResult(
             success=True,
-            output=f"Found {len(files)} files matching '{pattern}' in '{directory}':\n" + "\n".join(files)
+            output=output_str
         )
     except Exception as e:
         return ExecutionResult(success=False, output="", error=str(e))
