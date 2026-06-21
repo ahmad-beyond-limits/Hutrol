@@ -1,3 +1,4 @@
+import sys
 import typer
 from rich.console import Console
 from human.config.loader import load_config, ConfigError, config_manager
@@ -131,4 +132,6 @@ def export_audit():
         console.print(f"[bold red]Failed to export audit logs:[/bold red] {e}")
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        sys.argv.append("repl")
     app()
