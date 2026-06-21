@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.human/
+dist/
+build/
+*.egg-info/
+human_compliance_export_*.zip
