@@ -1,4 +1,5 @@
 import requests
+import platform
 from typing import Dict, Any, List
 from human.providers.base import LLMProvider
 from human.orchestrator.types import ToolCallRequest
@@ -15,9 +16,11 @@ class OllamaProvider(LLMProvider):
         """Sends a request to local Ollama. Format adheres to Ollama's Chat API."""
         
         # Ollama supports tools as of recent versions, we pass them down
+        os_info = f"{platform.system()} {platform.release()}"
         payload = {
             "model": self.model,
             "messages": [
+                {"role": "system", "content": f"You are a helpful assistant running on a {os_info} machine. Use tools to fulfill requests. Output OS-compatible shell commands."},
                 {"role": "user", "content": prompt}
             ],
             "tools": tools,

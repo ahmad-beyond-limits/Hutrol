@@ -1,4 +1,5 @@
 import json
+import platform
 from typing import List, Dict, Any
 from openai import OpenAI
 from human.providers.base import LLMProvider
@@ -14,8 +15,9 @@ class OpenRouterProvider(LLMProvider):
         )
 
     def generate_plan(self, prompt: str, tools: List[Dict[str, Any]]) -> str | ToolCallRequest:
+        os_info = f"{platform.system()} {platform.release()}"
         messages = [
-            {"role": "system", "content": "You are a helpful assistant. Use the provided tools to fulfill the user's request if necessary."},
+            {"role": "system", "content": f"You are a helpful assistant running on a {os_info} machine. Use the provided tools to fulfill the user's request. If running shell commands, ensure they are compatible with this OS (e.g. PowerShell/cmd on Windows, Bash on Linux)."},
             {"role": "user", "content": prompt}
         ]
         
