@@ -113,14 +113,50 @@ def rule_set(color: str, command: str):
 
 @app.command()
 def update():
-    """Update Hutrol to the latest version from GitHub."""
+    """Update Hutrol to the latest version via Windows Installer (OTA)."""
+    import urllib.request
+    import json
+    import os
     import subprocess
-    console.print("[bold yellow]Pulling latest updates from GitHub...[/bold yellow]")
+    from pathlib import Path
+    
+    console.print("[bold yellow]Checking for latest updates from GitHub...[/bold yellow]")
+    
+    api_url = "https://api.github.com/repos/ahmad-beyond-limits/Hutrol/releases/latest"
+    req = urllib.request.Request(api_url, headers={'User-Agent': 'Hutrol-CLI'})
+    
     try:
-        subprocess.run(["git", "pull"], check=True)
-        console.print("[bold yellow]Syncing dependencies...[/bold yellow]")
-        subprocess.run(["uv", "sync"], check=True)
-        console.print("[bold green]Update complete! Run 'hutrol' to restart.[/bold green]")
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode())
+            
+        assets = data.get("assets", [])
+        installer_url = None
+        for asset in assets:
+            if asset.get("name") == "HutrolSetup.exe":
+                installer_url = asset.get("browser_download_url")
+                break
+                
+        if not installer_url:
+            console.print("[bold red]Error:[/bold red] No installer (HutrolSetup.exe) found in the latest release.")
+            raise typer.Exit(1)
+            
+        temp_dir = Path(os.environ.get("TEMP", "."))
+        installer_path = temp_dir / "HutrolSetup_update.exe"
+        
+        console.print(f"[bold yellow]Downloading latest release ({data.get('tag_name')})...[/bold yellow]")
+        urllib.request.urlretrieve(installer_url, installer_path)
+        
+        console.print("[bold green]Download complete! Launching silent installer...[/bold green]")
+        
+        # Launch installer in the background completely silently, closing the current app.
+        subprocess.Popen(
+            [str(installer_path), "/SILENT", "/SP-", "/SUPPRESSMSGBOXES", "/FORCECLOSEAPPLICATIONS"],
+            creationflags=subprocess.CREATE_NEW_CONSOLE
+        )
+        
+        # Terminate the current CLI so the installer can overwrite the executable
+        sys.exit(0)
+        
     except Exception as e:
         console.print(f"[bold red]Update failed:[/bold red] {e}")
 
