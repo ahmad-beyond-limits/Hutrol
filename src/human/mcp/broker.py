@@ -1,8 +1,56 @@
 import subprocess
 import platform
+import uuid
 from typing import Dict, Any, Tuple
 from human.safety.risk_classifier import RiskTier
 from human.orchestrator.types import ExecutionResult
+
+class PersistentShell:
+    _instance = None
+    
+    def __init__(self):
+        if platform.system() == "Windows":
+            cmd = ["powershell", "-NoProfile", "-NonInteractive"]
+        else:
+            cmd = ["bash"]
+            
+        self.process = subprocess.Popen(
+            cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+        
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+        
+    def execute(self, command: str) -> str:
+        sentinel = str(uuid.uuid4())
+        
+        if platform.system() == "Windows":
+            full_cmd = f"{command}\nWrite-Host '{sentinel}'\n"
+        else:
+            full_cmd = f"{command}\necho '{sentinel}'\n"
+            
+        self.process.stdin.write(full_cmd)
+        self.process.stdin.flush()
+        
+        output = []
+        while True:
+            line = self.process.stdout.readline()
+            if not line:
+                break
+            line = line.rstrip('\n\r')
+            if sentinel in line:
+                break
+            output.append(line)
+            
+        return '\n'.join(output)
 
 class MCPBroker:
     """Model Context Protocol Secure Broker. Acts as the OS Firewall."""
@@ -33,27 +81,8 @@ class MCPBroker:
             return ExecutionResult(success=False, output="", error=f"MCP Broker Blocked: {reason}")
             
         try:
-            # We use shell=True here just for demonstration. 
-            # In a real app, this would be highly sanitized or passed through an AST parser.
-            if platform.system() == "Windows":
-                cmd_args = ["powershell", "-Command", command]
-                shell_val = False
-            else:
-                cmd_args = command
-                shell_val = True
-
-            result = subprocess.run(
-                cmd_args, 
-                shell=shell_val, 
-                capture_output=True, 
-                text=True, 
-                timeout=30
-            )
-            if result.returncode == 0:
-                return ExecutionResult(success=True, output=result.stdout)
-            else:
-                return ExecutionResult(success=False, output=result.stdout, error=result.stderr)
-        except subprocess.TimeoutExpired:
-            return ExecutionResult(success=False, output="", error="Execution timed out after 30 seconds.")
+            shell = PersistentShell.get_instance()
+            out = shell.execute(command)
+            return ExecutionResult(success=True, output=out)
         except Exception as e:
             return ExecutionResult(success=False, output="", error=str(e))
