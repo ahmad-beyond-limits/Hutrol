@@ -98,6 +98,32 @@ def config_list():
         else:
             console.print(f"[bold cyan]{k}[/bold cyan]: {v}")
 
+rule_app = typer.Typer(help="Manage command safety rules.")
+app.add_typer(rule_app, name="rule")
+
+@rule_app.command("set")
+def rule_set(color: str, command: str):
+    """Set the safety color for a command (red, yellow, green)."""
+    if color.lower() not in ["red", "yellow", "green"]:
+        console.print("[bold red]Error:[/bold red] Color must be one of: red, yellow, green.")
+        raise typer.Exit(1)
+        
+    config_manager.set_rule(command, color)
+    console.print(f"[bold green]Successfully set '{command}' to {color}.[/bold green]")
+
+@app.command()
+def update():
+    """Update Hutrol to the latest version from GitHub."""
+    import subprocess
+    console.print("[bold yellow]Pulling latest updates from GitHub...[/bold yellow]")
+    try:
+        subprocess.run(["git", "pull"], check=True)
+        console.print("[bold yellow]Syncing dependencies...[/bold yellow]")
+        subprocess.run(["uv", "sync"], check=True)
+        console.print("[bold green]Update complete! Run 'hutrol' to restart.[/bold green]")
+    except Exception as e:
+        console.print(f"[bold red]Update failed:[/bold red] {e}")
+
 @app.command()
 def export_audit():
     """Export compliance logs as a zipped archive."""

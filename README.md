@@ -26,10 +26,10 @@ The architecture of Hutrol follows a strict pipeline: **Parse → Plan → Evalu
 The core of Hutrol is a deterministic finite state machine (FSM). Rather than letting the LLM dictate the execution loop in a recursive chain of thought, the FSM guarantees that every agent step passes through specific, hardcoded checkpoints.
 
 ### 2. Model Context Protocol (MCP) Broker
-The MCP Broker acts as the **OS Firewall**. It intercepts all requests from the LLM to use a tool (e.g., `list_directory`, `run_system_command`). It classifies the request into Risk Tiers:
-- `READ_ONLY`: Allowed automatically (e.g., `Get-ChildItem`).
-- `MUTATING_SCOPED`: Requires notification (e.g., writing a new file).
-- `MUTATING_UNSCOPED` / `DESTRUCTIVE`: Blocked or requires explicit Human-in-the-Loop `[y/N]` approval (e.g., `Remove-Item`).
+The MCP Broker acts as the **OS Firewall**. It intercepts all requests from the LLM to use a tool (e.g., `list_directory`, `run_system_command`). It evaluates the command against your dynamic safety configuration (`RULES_RED`, `RULES_YELLOW`):
+- `RED` (Destructive): Explicitly blocked. The agent cannot proceed.
+- `YELLOW` (Restricted): Requires explicit Human-in-the-Loop `[y/N]` approval (e.g., `Remove-Item`).
+- `GREEN` (Safe): Allowed automatically without a prompt. All commands that are not in the Red or Yellow lists are treated as Green by default.
 
 **Persistent Background Shell:** The MCP broker features a true stateful persistent shell backend. Unlike standard stateless script runners, Hutrol runs an invisible background terminal session (PowerShell or Bash) that stays alive for the entire duration of your REPL session. This means if the agent navigates directories (`cd`), starts background jobs, or defines environment variables, the system retains that state flawlessly across consecutive commands!
 
@@ -159,7 +159,19 @@ Displays all of your currently active configuration settings. Sensitive informat
 hutrol config list
 ```
 
-### 3. `hutrol run "<prompt>"`
+### 3. `hutrol rule set <COLOR> <COMMAND>`
+Set the safety risk classification for a system command. The agent can also use natural language to execute this on your behalf if you tell it to "put rm in red".
+* **`red`**: Blocks the command completely.
+* **`yellow`**: Forces a human-in-the-loop `[y/N]` confirmation prompt.
+* **`green`**: Removes the command from red/yellow lists, allowing it to execute automatically.
+
+**Example:**
+```bash
+hutrol rule set red rm
+hutrol rule set yellow Stop-Process
+```
+
+### 4. `hutrol run "<prompt>"`
 The "Single Shot" execution mode. Hutrol will parse the prompt, execute the necessary tools or system commands to accomplish the task, and then immediately terminate. Ideal for CI/CD pipelines or background scripts.
 
 **Example:**
@@ -175,12 +187,20 @@ Starts an interactive terminal session (`hutrol>`). Context is maintained across
 hutrol repl
 ```
 
-### 5. `hutrol export-audit`
+### 6. `hutrol export-audit`
 Packages your local immutable system logs (`audit.jsonl`), tool execution traces (`trace.jsonl`), and human-in-the-loop decisions (`approvals.jsonl`) into a timestamped, zipped archive. It also generates a cryptographic `SHA-256 Checksum` for the file to prove the integrity of the audit logs to enterprise compliance teams.
 
 **Example:**
 ```bash
 hutrol export-audit
+```
+
+### 7. `hutrol update`
+Pulls the latest code updates from the GitHub repository and synchronizes all dependencies automatically.
+
+**Example:**
+```bash
+hutrol update
 ```
 
 ---
