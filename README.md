@@ -1,6 +1,12 @@
+<p align="center">
+  <img src="./logo.png" alt="Hutrol Logo" width="300">
+</p>
+
 # Hutrol CLI — Enterprise Agentic Harness
 
 **Hutrol** is an enterprise-grade, agentic Command Line Interface (CLI) harness designed to bring autonomous AI capabilities directly to your operating system, wrapped in a deterministic, highly secure, and fully auditable execution layer.
+
+[![Download Installer](https://img.shields.io/badge/Download-HutrolSetup.exe-7A5FFF?style=for-the-badge&logo=windows)](https://github.com/ahmad-beyond-limits/Hutrol/releases/latest)
 
 Unlike standard chat interfaces or basic script wrappers, Hutrol operates as a **secure broker** between advanced Large Language Models (LLMs) and your local filesystem and OS. It evaluates risk, enforces policies, requires explicit human approval for destructive actions, and exports immutable logs for enterprise compliance.
 
