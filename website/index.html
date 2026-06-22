@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hutrol CLI — Enterprise Agentic Harness</title>
+    <meta name="description" content="Hutrol operates as a secure broker between advanced Large Language Models and your local filesystem and OS.">
+    
+    <!-- Google Fonts: Syne, DM Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Branding Colors */
+            --violet-primary: #7A5FFF;
+            --violet-dark: #5534E0;
+            --cyan-terminal: #00CEEE;
+            
+            /* Light Theme Context */
+            --bg-light: #F8F9FA;
+            --text-primary: #1A1D20;
+            --text-secondary: #5A6270;
+            
+            /* Dark Terminal Context */
+            --abyss-bg: #0B0E14;
+            --surface-bg: #151A22;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--violet-primary);
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-left: 32px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--violet-primary);
+        }
+
+        .btn-primary {
+            background-color: var(--violet-primary);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--violet-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(122, 95, 255, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 80vh;
+        }
+
+        .hero-content h1 {
+            font-size: 64px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn-secondary {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--violet-primary);
+            color: var(--violet-primary);
+        }
+
+        /* Signature Element: Command Translator Card */
+        .translator-card {
+            background-color: var(--abyss-bg);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 32px 64px rgba(11, 14, 20, 0.15);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .translator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--violet-primary), var(--cyan-terminal));
+        }
+
+        .input-block {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            font-family: 'Syne', sans-serif;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .human-input {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--surface-bg);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--violet-primary);
+        }
+
+        .human-input p {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .translation-arrow {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.2);
+            margin: 16px 0;
+            animation: pulse 2s infinite;
+        }
+
+        .machine-output {
+            background: var(--surface-bg);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            border-left: 3px solid var(--cyan-terminal);
+            position: relative;
+        }
+
+        .machine-output code {
+            color: var(--cyan-terminal);
+            font-size: 15px;
+            display: block;
+        }
+
+        .machine-output .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background-color: var(--cyan-terminal);
+            vertical-align: middle;
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+        }
+
+        .risk-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* Animations */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(4px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 0.5; }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-header h2 {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.03);
+            border: 1px solid #E2E8F0;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(122, 95, 255, 0.1);
+            color: var(--violet-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 968px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 40px;
+            }
+            .hero-content p {
+                margin: 0 auto 40px auto;
+            }
+            .action-group {
+                justify-content: center;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-container">
+            <!-- Injecting the conceptual logo icon using SVG -->
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 8C4 5.79086 5.79086 4 8 4H24C26.2091 4 28 5.79086 28 8V20C28 22.2091 26.2091 24 24 24H12L4 30V8Z" fill="#1A1D20"/>
+                <path d="M12 11L16 14L12 17" stroke="#7A5FFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18 18H21" stroke="#7A5FFF" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <div class="logo-text">hut<span>rol</span></div>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="https://github.com/ahmad-beyond-limits/Hutrol">Documentation</a>
+            <a href="https://github.com/ahmad-beyond-limits/Hutrol/releases/latest" class="btn-primary">Download CLI</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Human Speech.<br>Machine Precision.</h1>
+            <p>The enterprise-grade agentic CLI harness. Bring autonomous AI capabilities directly to your operating system with safety, policies, and auditability built-in.</p>
+            <div class="action-group">
+                <a href="https://github.com/ahmad-beyond-limits/Hutrol/releases/latest" class="btn-primary">Download HutrolSetup.exe</a>
+                <a href="https://github.com/ahmad-beyond-limits/Hutrol" class="btn-secondary">View Source</a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <!-- The Signature Element -->
+            <div class="translator-card">
+                <div class="input-block">
+                    <div class="input-label">Human Intent</div>
+                    <div class="human-input">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--violet-primary)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <p>"Delete the temp build folders"</p>
+                    </div>
+                </div>
+
+                <div class="translation-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                </div>
+
+                <div class="input-block" style="margin-bottom: 0;">
+                    <div class="input-label">Machine Execution</div>
+                    <div class="machine-output">
+                        <div class="risk-badge">YELLOW RULE</div>
+                        <code>Remove-Item -Path .\build -Recurse -Force<span class="cursor"></span></code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2>The Agentic Security Problem, Solved.</h2>
+            <p>Allowing LLMs unsupervised access to your filesystem is a massive security risk. Hutrol acts as the secure, deterministic broker.</p>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h3>Safety by Default</h3>
+                <p>No mutating commands execute without explicit human approval. The dynamic safety classifier flags dangerous registry and file operations instantly.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <h3>Enterprise Audit Trails</h3>
+                <p>Every tool execution, model prompt, and system trace is securely logged in an immutable, append-only format ready for your SIEM.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                </div>
+                <h3>Agentic Orchestrator</h3>
+                <p>Beyond a chat wrapper, Hutrol handles multi-step planning, state management, and tool routing across leading LLM providers.</p>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
