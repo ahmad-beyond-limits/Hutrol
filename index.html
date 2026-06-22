@@ -416,6 +416,8 @@
         </div>
         <div class="nav-links">
             <a href="#features">Features</a>
+            <a href="#configure">Configuration</a>
+            <a href="#tutorial">Tutorial</a>
             <a href="https://github.com/ahmad-beyond-limits/Hutrol">Documentation</a>
             <a href="https://github.com/ahmad-beyond-limits/Hutrol/releases/latest" class="btn-primary">Download CLI</a>
         </div>
@@ -485,6 +487,94 @@
                 <h3>Agentic Orchestrator</h3>
                 <p>Beyond a chat wrapper, Hutrol handles multi-step planning, state management, and tool routing across leading LLM providers.</p>
             </div>
+        </div>
+    </section>
+
+    <!-- Configuration Section -->
+    <section id="configure" class="features" style="padding-top: 40px;">
+        <div class="section-header">
+            <h2>Quick Configuration</h2>
+            <p>Set up Hutrol in seconds using either cloud models or local air-gapped models.</p>
+        </div>
+        
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div class="card" style="background: var(--abyss-bg); color: white; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 32px 64px rgba(11, 14, 20, 0.1);">
+                <h3 style="color: white; margin-bottom: 24px; font-family: 'Playfair Display', serif;">Option 1: OpenRouter (Cloud)</h3>
+                <div class="machine-output" style="background: var(--surface-bg); padding: 24px;">
+                    <code><span style="color: var(--violet-primary);"># Set the provider</span><br>hutrol config set PROVIDER openrouter<br><br><span style="color: var(--violet-primary);"># Add your API Key</span><br>hutrol config set OPENROUTER_API_KEY sk-or-...<br><br><span style="color: var(--violet-primary);"># Choose a Tool-Calling model</span><br>hutrol config set OPENROUTER_MODEL meta-llama/llama-3.1-8b-instruct</code>
+                </div>
+            </div>
+
+            <div class="card" style="background: var(--abyss-bg); color: white; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 32px 64px rgba(11, 14, 20, 0.1);">
+                <h3 style="color: white; margin-bottom: 24px; font-family: 'Playfair Display', serif;">Option 2: Ollama (Air-Gapped)</h3>
+                <div class="machine-output" style="background: var(--surface-bg); padding: 24px;">
+                    <code><span style="color: var(--violet-primary);"># Switch to local provider</span><br>hutrol config set PROVIDER ollama<br><br><span style="color: var(--violet-primary);"># Set your local model name</span><br>hutrol config set OLLAMA_MODEL llama3.1<br><br><span style="color: var(--violet-primary);"># Set the host URL</span><br>hutrol config set OLLAMA_HOST http://localhost:11434</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tutorial Section -->
+    <section id="tutorial" class="features" style="padding-top: 40px; padding-bottom: 120px;">
+        <div class="section-header">
+            <h2>How to Use Hutrol</h2>
+            <p>A completely natural language interface for your operating system.</p>
+        </div>
+        
+        <div class="grid" style="grid-template-columns: 1fr; gap: 24px; max-width: 900px; margin: 0 auto;">
+            
+            <div class="card" style="display: flex; gap: 32px; align-items: center; padding: 32px 40px;">
+                <div class="card-icon" style="margin-bottom: 0; min-width: 56px; height: 56px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 8px;">1. Interactive REPL Mode</h3>
+                    <p style="margin-bottom: 16px;">Start an ongoing conversation with the agent. It retains context across queries, allowing you to ask follow-up questions while the state machine remembers everything.</p>
+                    <div class="machine-output" style="padding: 12px 20px; display: inline-block;">
+                        <code>hutrol repl</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="display: flex; gap: 32px; align-items: center; padding: 32px 40px;">
+                <div class="card-icon" style="margin-bottom: 0; min-width: 56px; height: 56px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 8px;">2. Single Command Execution</h3>
+                    <p style="margin-bottom: 16px;">Run a specific task and exit immediately. Ideal for CI/CD pipelines, automated scripts, or fast one-off requests from the terminal.</p>
+                    <div class="machine-output" style="padding: 12px 20px; display: inline-block;">
+                        <code>hutrol run "Find all python files and tell me how many there are"</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="display: flex; gap: 32px; align-items: center; padding: 32px 40px;">
+                <div class="card-icon" style="margin-bottom: 0; min-width: 56px; height: 56px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 8px;">3. Command Risk Rules</h3>
+                    <p style="margin-bottom: 16px;">Set the safety risk classification for a system command dynamically. Red completely blocks the command, Yellow prompts for [y/N] approval, and Green executes instantly.</p>
+                    <div class="machine-output" style="padding: 12px 20px; display: inline-block;">
+                        <code>hutrol rule set yellow Stop-Process</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="display: flex; gap: 32px; align-items: center; padding: 32px 40px;">
+                <div class="card-icon" style="margin-bottom: 0; min-width: 56px; height: 56px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 8px;">4. Compliance Export</h3>
+                    <p style="margin-bottom: 16px;">Package your immutable system logs, tool execution traces, and human-in-the-loop decisions into a timestamped archive with a cryptographic SHA-256 Checksum.</p>
+                    <div class="machine-output" style="padding: 12px 20px; display: inline-block;">
+                        <code>hutrol export-audit</code>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
